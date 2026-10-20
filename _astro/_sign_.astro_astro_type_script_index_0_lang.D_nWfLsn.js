@@ -1,0 +1,1 @@
+import{c as e}from"./zodiac.W-1wTXOM.js";import{r as t,t as n}from"./render.B5wp9nfX.js";var r=document.querySelector(`[data-reading]`),{lang:i,sign:a}=r.dataset;r.innerHTML=t(i,a,e());var o=document.querySelector(`[data-personal]`),s=n(i,new URLSearchParams(location.search).get(`d`));s&&(o.innerHTML=s,o.hidden=!1);
