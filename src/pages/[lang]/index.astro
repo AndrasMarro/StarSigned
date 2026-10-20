@@ -49,25 +49,25 @@ const stars = Array.from({ length: 110 }, () => ({ x: r() * 100, y: r() * 100, s
     </section>
 
     <section class="section" id="today">
-      <header class="section-head">
+      <header class="section-head" data-reveal>
         <h2>{t.skyTitle}</h2>
         <p class="muted">{t.skySub}</p>
       </header>
-      <div class="sky" data-sky set:html={skyHTML(lang, new Date())} />
+      <div class="sky" data-reveal data-sky set:html={skyHTML(lang, new Date())} />
     </section>
 
     <section class="section">
-      <header class="section-head"><h2>{t.dailyTitle}</h2></header>
-      <div class="daily-list" data-daily-list set:html={dailyListHTML(lang, today(), base)} />
+      <header class="section-head" data-reveal><h2>{t.dailyTitle}</h2></header>
+      <div class="daily-list stagger" data-reveal data-daily-list set:html={dailyListHTML(lang, today(), base)} />
     </section>
 
     <section class="section">
-      <header class="section-head"><h2>{t.signsTitle}</h2></header>
-      <ul class="sign-grid">
+      <header class="section-head" data-reveal><h2>{t.signsTitle}</h2></header>
+      <ul class="sign-grid stagger" data-reveal>
         {SIGNS.map((s) => (
           <li>
             <a class="sign-card" href={`${base}${lang}/${s.id}/`}>
-              <span class="glyph" aria-hidden="true">{glyph(s)}</span>
+              <span class="glyph" style={`view-transition-name:g-${s.id}`} aria-hidden="true">{glyph(s)}</span>
               <span class="sign-name">{SIGN_TEXT[lang][s.id].name}</span>
               <span class="muted small">{fmt(s.start)} – {fmt(s.end)} · {TERMS[lang][s.element]}</span>
             </a>

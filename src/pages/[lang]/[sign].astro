@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { LANGS, UI, SIGN_TEXT, TERMS, dayName } from '../../lib/content.js';
+import { LANGS, UI, SIGN_TEXT, TERMS, INFO, dayName } from '../../lib/content.js';
 import { SIGNS, byId, glyph, opposite, today } from '../../lib/zodiac.js';
 import { readingHTML } from '../../lib/render.js';
 
@@ -19,21 +19,30 @@ const opp = opposite(id);
 const fmt = (d) => new Date(2001, d[0] - 1, d[1]).toLocaleDateString(t.locale, { day: 'numeric', month: 'long' });
 const link = (sign) => `${base}${lang}/${sign.id}/`;
 
+const I = INFO[lang];
+const name = (sign) => SIGN_TEXT[lang][sign.id].name;
+const siblings = (key) => SIGNS.filter((o) => o[key] === s[key] && o !== s);
+const yang = s.element === 'fire' || s.element === 'air';
+const deeper = [
+  { label: t.element, value: T[s.element], text: I.element[s.element], also: siblings('element') },
+  { label: t.modality, value: T[s.modality], text: I.modality[s.modality], also: siblings('modality'),
+    note: `${t.season}: ${I.seasonText(I.stages[s.modality], I.seasons[Math.floor(i / 3)])}` },
+  { label: t.planet, value: T[s.planet], text: I.planet[s.planet], also: siblings('planet') },
+  { label: t.house, value: t.houseN(s.house), text: I.house[s.house - 1], note: I.houseIntro },
+  { label: t.body, value: x.body, text: I.body(x.name, x.body) },
+  { label: t.polarity, value: yang ? 'Yang' : 'Yin', text: I.polarity[yang ? 'yang' : 'yin'] },
+];
+
 const facts = [
-  [t.element, T[s.element]],
-  [t.modality, T[s.modality]],
-  [t.planet, T[s.planet]],
-  [t.house, s.house],
   [t.stone, T[s.stone]],
   [t.day, dayName(lang, s.day)],
   [t.numbers, s.numbers.join(', ')],
-  [t.body, x.body],
 ];
 ---
 <Base lang={lang} path={`${id}/`} title={`${x.name} · ${fmt(s.start)} – ${fmt(s.end)} · StarSigned`} description={x.about}>
   <main class="sign-page">
     <section class="sign-hero">
-      <span class="sign-glyph reveal" style="--i:0" aria-hidden="true">{glyph(s)}</span>
+      <span class="sign-glyph reveal" style={`--i:0;view-transition-name:g-${id}`} aria-hidden="true">{glyph(s)}</span>
       <p class="eyebrow reveal" style="--i:1">{x.animal} · {fmt(s.start)} – {fmt(s.end)}</p>
       <h1 class="hero-heading hero-heading--short reveal" style="--i:2">{x.name}</h1>
       <p class="keywords reveal" style="--i:3">{x.keywords.map((k) => <span>{k}</span>)}</p>
@@ -43,7 +52,7 @@ const facts = [
 
     <section class="panel reading" data-reading data-lang={lang} data-sign={id} set:html={readingHTML(lang, id, today())} />
 
-    <section class="section two-col">
+    <section class="section two-col" data-reveal>
       <div>
         <p class="lead">{x.about}</p>
         <div class="two-col inner">
@@ -65,7 +74,24 @@ const facts = [
       </aside>
     </section>
 
-    <nav class="pager section" aria-label={t.all}>
+    <section class="section">
+      <header class="section-head" data-reveal><h2>{t.deeper}</h2></header>
+      <div class="deeper stagger" data-reveal>
+        {deeper.map((d) => (
+          <article class="deep-card">
+            <p class="eyebrow">{d.label}</p>
+            <h3>{d.value}</h3>
+            <p>{d.text}</p>
+            {d.note && <p class="muted small">{d.note}</p>}
+            {d.also?.length > 0 && (
+              <p class="small muted">{t.sharedWith}: {d.also.map((o, k) => <>{k > 0 && ', '}<a href={link(o)}>{glyph(o)} {name(o)}</a></>)}</p>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <nav class="pager section" data-reveal aria-label={t.all}>
       <a href={link(prev)}>← {glyph(prev)} {SIGN_TEXT[lang][prev.id].name}</a>
       <a href={`${base}${lang}/`}>{t.all}</a>
       <a href={link(next)}>{SIGN_TEXT[lang][next.id].name} {glyph(next)} →</a>

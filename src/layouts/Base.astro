@@ -24,10 +24,12 @@ const t = UI[lang];
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="canonical" href={new URL(`${base}${lang}/${path}`, Astro.site)} />
     {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(`${base}${l}/${path}`, Astro.site)} />)}
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
     <header class="nav">
       <a class="logo" href={`${base}${lang}/`}>Star<em>Signed</em></a>
+      <a class="nav-link" href={`${base}${lang}/wheel/`} aria-current={path === 'wheel/' ? 'page' : undefined}>{t.wheelNav}</a>
       <nav class="langs" aria-label="Language">
         {LANGS.map((l) => <a href={`${base}${l}/${path}`} aria-current={l === lang ? 'true' : undefined} hreflang={l}>{l.toUpperCase()}</a>)}
       </nav>
@@ -37,5 +39,13 @@ const t = UI[lang];
       <span>© {new Date().getFullYear()} StarSigned</span>
       <span>{t.footer}</span>
     </footer>
+    <script>
+      // Scroll reveal: one-shot, then stop observing.
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))),
+        { threshold: 0.15, rootMargin: '0px 0px -40px 0px' },
+      );
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+    </script>
   </body>
 </html>
