@@ -1,0 +1,41 @@
+---
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource-variable/geist';
+import '../styles/global.css';
+import { LANGS, UI } from '../lib/content.js';
+
+const { lang, title, description, path = '' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const t = UI[lang];
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0a0d" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="canonical" href={new URL(`${base}${lang}/${path}`, Astro.site)} />
+    {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(`${base}${l}/${path}`, Astro.site)} />)}
+  </head>
+  <body>
+    <header class="nav">
+      <a class="logo" href={`${base}${lang}/`}>Star<em>Signed</em></a>
+      <nav class="langs" aria-label="Language">
+        {LANGS.map((l) => <a href={`${base}${l}/${path}`} aria-current={l === lang ? 'true' : undefined} hreflang={l}>{l.toUpperCase()}</a>)}
+      </nav>
+    </header>
+    <slot />
+    <footer class="footer">
+      <span>© {new Date().getFullYear()} StarSigned</span>
+      <span>{t.footer}</span>
+    </footer>
+  </body>
+</html>

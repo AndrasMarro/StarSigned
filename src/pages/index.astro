@@ -1,0 +1,16 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>StarSigned</title>
+    <meta http-equiv="refresh" content={`0; url=${base}en/`} />
+    <link rel="canonical" href={`${base}en/`} />
+    <script is:inline define:vars={{ base }}>
+      location.replace(base + (navigator.language.toLowerCase().startsWith('de') ? 'de/' : 'en/'));
+    </script>
+  </head>
+  <body style="background:#0b0a0d"><a href={`${base}en/`}>StarSigned</a></body>
+</html>

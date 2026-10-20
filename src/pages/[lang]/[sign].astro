@@ -1,0 +1,87 @@
+---
+import Base from '../../layouts/Base.astro';
+import { LANGS, UI, SIGN_TEXT, TERMS, dayName } from '../../lib/content.js';
+import { SIGNS, byId, glyph, opposite, today } from '../../lib/zodiac.js';
+import { readingHTML } from '../../lib/render.js';
+
+export const getStaticPaths = () => LANGS.flatMap((lang) => SIGNS.map((s) => ({ params: { lang, sign: s.id } })));
+
+const { lang, sign: id } = Astro.params;
+const t = UI[lang];
+const T = TERMS[lang];
+const s = byId(id);
+const x = SIGN_TEXT[lang][id];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const i = SIGNS.indexOf(s);
+const prev = SIGNS[(i + 11) % 12];
+const next = SIGNS[(i + 1) % 12];
+const opp = opposite(id);
+const fmt = (d) => new Date(2001, d[0] - 1, d[1]).toLocaleDateString(t.locale, { day: 'numeric', month: 'long' });
+const link = (sign) => `${base}${lang}/${sign.id}/`;
+
+const facts = [
+  [t.element, T[s.element]],
+  [t.modality, T[s.modality]],
+  [t.planet, T[s.planet]],
+  [t.house, s.house],
+  [t.stone, T[s.stone]],
+  [t.day, dayName(lang, s.day)],
+  [t.numbers, s.numbers.join(', ')],
+  [t.body, x.body],
+];
+---
+<Base lang={lang} path={`${id}/`} title={`${x.name} · ${fmt(s.start)} – ${fmt(s.end)} · StarSigned`} description={x.about}>
+  <main class="sign-page">
+    <section class="sign-hero">
+      <span class="sign-glyph reveal" style="--i:0" aria-hidden="true">{glyph(s)}</span>
+      <p class="eyebrow reveal" style="--i:1">{x.animal} · {fmt(s.start)} – {fmt(s.end)}</p>
+      <h1 class="hero-heading hero-heading--short reveal" style="--i:2">{x.name}</h1>
+      <p class="keywords reveal" style="--i:3">{x.keywords.map((k) => <span>{k}</span>)}</p>
+    </section>
+
+    <section class="panel personal" data-personal data-lang={lang} hidden></section>
+
+    <section class="panel reading" data-reading data-lang={lang} data-sign={id} set:html={readingHTML(lang, id, today())} />
+
+    <section class="section two-col">
+      <div>
+        <p class="lead">{x.about}</p>
+        <div class="two-col inner">
+          <div><h3>{t.strengths}</h3><ul class="tags">{x.strengths.map((k) => <li>{k}</li>)}</ul></div>
+          <div><h3>{t.weaknesses}</h3><ul class="tags">{x.weaknesses.map((k) => <li>{k}</li>)}</ul></div>
+        </div>
+        <h3>{t.inLove}</h3><p>{x.love}</p>
+        <h3>{t.atWork}</h3><p>{x.work}</p>
+      </div>
+      <aside>
+        <dl class="facts">
+          {facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+          <div><dt>{t.opposite}</dt><dd><a href={link(opp)}>{glyph(opp)} {SIGN_TEXT[lang][opp.id].name}</a></dd></div>
+        </dl>
+        <h3>{t.matches}</h3>
+        <ul class="tags">
+          {s.match.map((m) => <li><a href={link(byId(m))}>{glyph(byId(m))} {SIGN_TEXT[lang][m].name}</a></li>)}
+        </ul>
+      </aside>
+    </section>
+
+    <nav class="pager section" aria-label={t.all}>
+      <a href={link(prev)}>← {glyph(prev)} {SIGN_TEXT[lang][prev.id].name}</a>
+      <a href={`${base}${lang}/`}>{t.all}</a>
+      <a href={link(next)}>{SIGN_TEXT[lang][next.id].name} {glyph(next)} →</a>
+    </nav>
+  </main>
+</Base>
+
+<script>
+  import { today } from '../../lib/zodiac.js';
+  import { readingHTML, birthHTML } from '../../lib/render.js';
+
+  const reading = document.querySelector('[data-reading]');
+  const { lang, sign } = reading.dataset;
+  reading.innerHTML = readingHTML(lang, sign, today());
+
+  const personal = document.querySelector('[data-personal]');
+  const html = birthHTML(lang, new URLSearchParams(location.search).get('d'));
+  if (html) personal.innerHTML = html, (personal.hidden = false);
+</script>
