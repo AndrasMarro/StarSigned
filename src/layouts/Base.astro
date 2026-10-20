@@ -4,6 +4,7 @@ import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource-variable/geist';
 import '../styles/global.css';
 import { LANGS, UI } from '../lib/content.js';
+import { LEARN } from '../lib/lore.js';
 
 const { lang, title, description, path = '' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
@@ -30,6 +31,7 @@ const t = UI[lang];
     <header class="nav">
       <a class="logo" href={`${base}${lang}/`}>Star<em>Signed</em></a>
       <a class="nav-link" href={`${base}${lang}/wheel/`} aria-current={path === 'wheel/' ? 'page' : undefined}>{t.wheelNav}</a>
+      <a class="nav-link" href={`${base}${lang}/learn/`} aria-current={path === 'learn/' ? 'page' : undefined}>{LEARN[lang].nav}</a>
       <nav class="langs" aria-label="Language">
         {LANGS.map((l) => <a href={`${base}${l}/${path}`} aria-current={l === lang ? 'true' : undefined} hreflang={l}>{l.toUpperCase()}</a>)}
       </nav>

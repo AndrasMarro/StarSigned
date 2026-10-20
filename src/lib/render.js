@@ -2,6 +2,7 @@
 // and re-rendered in the browser with the visitor's local date.
 import { SIGNS, byId, glyph, rng, sky, birthInfo } from './zodiac.js';
 import { UI, TERMS, SIGN_TEXT, DAILY } from './content.js';
+import { LEARN } from './lore.js';
 
 const pick = (r, list) => list[Math.floor(r() * list.length)];
 const stars = (n) => '<span class="stars" aria-hidden="true">' + '●'.repeat(n) + '<i>' + '●'.repeat(5 - n) + '</i></span>';
@@ -44,7 +45,7 @@ export function readingHTML(lang, signId, iso) {
 export function dailyListHTML(lang, iso, base) {
   return SIGNS.map((s) => {
     const x = reading(lang, s.id, iso);
-    return `<a class="daily-item" href="${base}${lang}/${s.id}/">
+    return `<a class="daily-item ${s.element}" href="${base}${lang}/${s.id}/">
   <span class="glyph" aria-hidden="true">${glyph(s)}</span>
   <span><strong>${SIGN_TEXT[lang][s.id].name}</strong><span class="muted"> · ${x.mood}</span><br><span class="daily-text">${x.text}</span></span>
 </a>`;
@@ -84,6 +85,8 @@ export function birthHTML(lang, iso) {
   <div><dt>${t.decan(b.decan)}</dt><dd>${t.coRuled(name(b.coRuler))}</dd></div>
   <div><dt>${t.lifePath}</dt><dd>${b.lifePath}</dd></div>
   <div><dt>${t.bornOn}</dt><dd>${TERMS[lang].days[b.weekday]}</dd></div>
+  <div><dt>${LEARN[lang].sidereal}</dt><dd>${glyph(b.sidereal)} ${name(b.sidereal)}</dd></div>
+  <div><dt>${LEARN[lang].constellation}</dt><dd>${b.constellation === 'ophiuchus' ? '⛎\uFE0E ' + LEARN[lang].ophiuchus : glyph(byId(b.constellation)) + ' ' + name(byId(b.constellation))}</dd></div>
   ${b.days > 0 ? `<div><dt>&nbsp;</dt><dd>${t.daysOld(b.days)}</dd></div>` : ''}
 </dl>
 ${b.cusp ? `<p class="cusp">${t.cusp(...b.cusp.map(name))}</p>` : ''}`;

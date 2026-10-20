@@ -66,7 +66,7 @@ const stars = Array.from({ length: 110 }, () => ({ x: r() * 100, y: r() * 100, s
       <ul class="sign-grid stagger" data-reveal>
         {SIGNS.map((s) => (
           <li>
-            <a class="sign-card" href={`${base}${lang}/${s.id}/`}>
+            <a class={`sign-card ${s.element}`} href={`${base}${lang}/${s.id}/`}>
               <span class="glyph" style={`view-transition-name:g-${s.id}`} aria-hidden="true">{glyph(s)}</span>
               <span class="sign-name">{SIGN_TEXT[lang][s.id].name}</span>
               <span class="muted small">{fmt(s.start)} – {fmt(s.end)} · {TERMS[lang][s.element]}</span>

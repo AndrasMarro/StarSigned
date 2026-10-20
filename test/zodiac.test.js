@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { signFor, birthInfo, lifePath, sky } from '../src/lib/zodiac.js';
+import { signFor, birthInfo, lifePath, sky, constellationFor } from '../src/lib/zodiac.js';
 
 test('sign boundaries', () => {
   const cases = [[1, 1, 'capricorn'], [1, 19, 'capricorn'], [1, 20, 'aquarius'], [3, 20, 'pisces'], [3, 21, 'aries'],
@@ -28,4 +28,12 @@ test('moon phase near known full moon', () => {
   const s = sky(new Date(Date.UTC(2024, 0, 25, 17, 54))); // full moon 25 Jan 2024
   assert.equal(s.phaseIndex, 4);
   assert.ok(s.illumination > 0.98);
+});
+
+test('constellation and sidereal', () => {
+  assert.equal(constellationFor(12, 5), 'ophiuchus');
+  assert.equal(constellationFor(1, 5), 'sagittarius');
+  assert.equal(constellationFor(10, 10), 'virgo');
+  assert.equal(birthInfo('1992-07-23').sidereal.id, 'cancer');
+  assert.equal(birthInfo('1990-01-10').sidereal.id, 'sagittarius');
 });

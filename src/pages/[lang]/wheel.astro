@@ -33,7 +33,7 @@ const ticks = Array.from({ length: 72 }, (_, k) => [pt(380, k * 5), pt(k % 6 ? 3
 
       <div class="filters reveal" style="--i:3" role="group" aria-label={t.element}>
         <button type="button" data-filter="" aria-pressed="true">{t.filterAll}</button>
-        {ELEMENTS.map((e) => <button type="button" data-filter={e} aria-pressed="false">{T[e]}</button>)}
+        {ELEMENTS.map((e) => <button type="button" class={e} data-filter={e} aria-pressed="false">{T[e]}</button>)}
       </div>
 
       <div class="zodiac" data-zodiac>
@@ -64,7 +64,7 @@ const ticks = Array.from({ length: 72 }, (_, k) => [pt(380, k * 5), pt(k % 6 ? 3
 
         <div class="zodiac-center" aria-live="polite">
           {SIGNS.map((s) => (
-            <div class="zodiac-info" data-info={s.id} hidden={s.id !== 'aries'}>
+            <div class={`zodiac-info ${s.element}`} data-info={s.id} hidden={s.id !== 'aries'}>
               <span class="zi-glyph" aria-hidden="true">{glyph(s)}</span>
               <strong class="zi-name">{SIGN_TEXT[lang][s.id].name}</strong>
               <span class="zi-dates">{fmt(s.start)} – {fmt(s.end)}</span>
@@ -80,7 +80,7 @@ const ticks = Array.from({ length: 72 }, (_, k) => [pt(380, k * 5), pt(k % 6 ? 3
       <header class="section-head" data-reveal><h2>{t.elementsTitle}</h2></header>
       <div class="elements stagger" data-reveal>
         {ELEMENTS.map((e) => (
-          <article class="deep-card">
+          <article class={`deep-card ${e}`}>
             <p class="eyebrow">{t.element}</p>
             <h3>{T[e]}</h3>
             <p>{INFO[lang].element[e].split('. ').slice(0, 2).join('. ')}.</p>
@@ -125,6 +125,7 @@ const ticks = Array.from({ length: 72 }, (_, k) => [pt(380, k * 5), pt(k % 6 ? 3
   let angle = 0, speed = BASE, target = BASE, last = performance.now();
   let drag = null;
   let pointerType = 'mouse';
+  let previewed = null;
 
   const render = () => {
     rotor.setAttribute('transform', `rotate(${angle})`);
@@ -180,11 +181,16 @@ const ticks = Array.from({ length: 72 }, (_, k) => [pt(380, k * 5), pt(k % 6 ? 3
     const enter = () => (show(s.dataset.id), (target = 0));
     s.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && enter());
     s.addEventListener('focus', enter);
-    s.addEventListener('pointerleave', () => (target = BASE));
+    s.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && (target = BASE));
     s.addEventListener('blur', () => (target = BASE));
     // Touch: first tap previews the sign in the centre, second tap opens it.
+    // Tracked separately from .active, because focus (fired before click) already marks it active.
     s.addEventListener('click', (e) => {
-      if (pointerType !== 'mouse' && !s.classList.contains('active')) e.preventDefault(), show(s.dataset.id);
+      if (pointerType === 'mouse' || previewed === s.dataset.id) return;
+      e.preventDefault();
+      previewed = s.dataset.id;
+      show(previewed);
+      target = 0;
     });
   });
 

@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { LANGS, UI, SIGN_TEXT, TERMS, INFO, dayName } from '../../lib/content.js';
 import { SIGNS, byId, glyph, opposite, today } from '../../lib/zodiac.js';
 import { readingHTML } from '../../lib/render.js';
+import { SIGN_LORE, LEARN } from '../../lib/lore.js';
 
 export const getStaticPaths = () => LANGS.flatMap((lang) => SIGNS.map((s) => ({ params: { lang, sign: s.id } })));
 
@@ -33,6 +34,9 @@ const deeper = [
   { label: t.polarity, value: yang ? 'Yang' : 'Yin', text: I.polarity[yang ? 'yang' : 'yin'] },
 ];
 
+const L = LEARN[lang];
+const lore = SIGN_LORE[lang][id];
+
 const facts = [
   [t.stone, T[s.stone]],
   [t.day, dayName(lang, s.day)],
@@ -40,7 +44,7 @@ const facts = [
 ];
 ---
 <Base lang={lang} path={`${id}/`} title={`${x.name} · ${fmt(s.start)} – ${fmt(s.end)} · StarSigned`} description={x.about}>
-  <main class="sign-page">
+  <main class={`sign-page ${s.element}`}>
     <section class="sign-hero">
       <span class="sign-glyph reveal" style={`--i:0;view-transition-name:g-${id}`} aria-hidden="true">{glyph(s)}</span>
       <p class="eyebrow reveal" style="--i:1">{x.animal} · {fmt(s.start)} – {fmt(s.end)}</p>
@@ -86,6 +90,21 @@ const facts = [
             {d.also?.length > 0 && (
               <p class="small muted">{t.sharedWith}: {d.also.map((o, k) => <>{k > 0 && ', '}<a href={link(o)}>{glyph(o)} {name(o)}</a></>)}</p>
             )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <header class="section-head" data-reveal>
+        <h2>{L.loreTitle}</h2>
+        <a class="muted" href={`${base}${lang}/learn/`}>{L.title} →</a>
+      </header>
+      <div class="deeper stagger" data-reveal>
+        {['myth', 'sky', 'fact'].map((k) => (
+          <article class="deep-card">
+            <p class="eyebrow">{L[k]}</p>
+            <p class="lore-text">{lore[k]}</p>
           </article>
         ))}
       </div>

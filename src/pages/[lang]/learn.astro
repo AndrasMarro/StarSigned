@@ -1,0 +1,80 @@
+---
+import Base from '../../layouts/Base.astro';
+import { LANGS } from '../../lib/content.js';
+import { LEARN } from '../../lib/lore.js';
+import { SIGNS, glyph } from '../../lib/zodiac.js';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+
+const { lang } = Astro.params;
+const L = LEARN[lang];
+const at = (r, deg) => [r * Math.cos((deg * Math.PI) / 180), -r * Math.sin((deg * Math.PI) / 180)];
+---
+<Base lang={lang} path="learn/" title={`${L.title} · StarSigned`} description={L.sub}>
+  <main>
+    <section class="sign-hero learn-hero">
+      <p class="eyebrow reveal" style="--i:0">StarSigned · {L.nav}</p>
+      <h1 class="hero-heading reveal" style="--i:1">{L.title}</h1>
+      <p class="hero-sub reveal" style="--i:2">{L.sub}</p>
+    </section>
+
+    <section class="section">
+      <header class="section-head" data-reveal><h2>{L.historyTitle}</h2></header>
+      <ol class="timeline stagger" data-reveal>
+        {L.history.map(([when, what]) => (
+          <li><span class="eyebrow">{when}</span><p>{what}</p></li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="section">
+      <header class="section-head" data-reveal><h2>{L.calcTitle}</h2></header>
+      <div class="deeper stagger" data-reveal>
+        {L.calc.map(([title, text], i) => (
+          <article class="deep-card">
+            <p class="eyebrow">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section two-col" data-reveal>
+      <div>
+        <h2>{L.tropicalTitle}</h2>
+        <p class="lead learn-lead">{L.tropical}</p>
+      </div>
+      <figure class="precession" aria-hidden="true">
+        <svg viewBox="-120 -120 240 240">
+          <circle r="100" class="p-ring" />
+          <circle r="62" class="p-ring dashed" />
+          {SIGNS.map((sg, i) => {
+            const [x, y] = at(82, 195 + i * 30);
+            return <text x={x} y={y} class={`p-glyph ${sg.element}`}>{glyph(sg)}</text>;
+          })}
+          <!-- The equinox point drifts backwards through the constellations: one lap ≈ 25,800 years. -->
+          <g class="p-spin">
+            <line x1="0" y1="0" x2="-112" y2="0" />
+            <circle cx="-112" cy="0" r="4" />
+          </g>
+          <circle r="5" class="p-earth" />
+        </svg>
+      </figure>
+    </section>
+
+    <section class="section">
+      <header class="section-head" data-reveal><h2>{L.siteTitle}</h2></header>
+      <dl class="facts-list stagger" data-reveal>
+        {L.site.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+    </section>
+
+    <section class="section">
+      <header class="section-head" data-reveal><h2>{L.factsTitle}</h2></header>
+      <ul class="quick-facts stagger" data-reveal>
+        {L.facts.map((f) => <li>{f}</li>)}
+      </ul>
+    </section>
+  </main>
+</Base>

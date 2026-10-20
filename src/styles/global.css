@@ -4,6 +4,11 @@
   --muted: rgb(242 237 228 / 0.56);
   --line: rgb(242 237 228 / 0.12);
   --gold: #c8a96a;
+  /* Element colours: muted so they sit next to the gold accent. */
+  --fire: #e8795a;
+  --earth: #9cbf74;
+  --air: #a7c7ef;
+  --water: #5cc2b8;
   --serif: 'Instrument Serif', 'Times New Roman', serif;
   --sans: 'Geist Variable', system-ui, sans-serif;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -13,6 +18,10 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+.fire { --el: var(--fire); }
+.earth { --el: var(--earth); }
+.air { --el: var(--air); }
+.water { --el: var(--water); }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -206,7 +215,7 @@ dd { margin: 0; font-size: 1.0625rem; }
 .daily-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
 .daily-item { display: flex; gap: 1rem; padding: 1.5rem; background: var(--bg); text-decoration: none; transition: background 0.4s var(--ease); }
 .daily-item:hover { background: rgb(242 237 228 / 0.03); }
-.daily-item .glyph { font-size: 1.75rem; line-height: 1; color: var(--gold); }
+.daily-item .glyph { font-size: 1.75rem; line-height: 1; color: var(--el, var(--gold)); }
 .daily-text { display: block; margin-top: 0.5rem; font-size: 0.9375rem; color: var(--muted); }
 
 .sign-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
@@ -216,7 +225,7 @@ dd { margin: 0; font-size: 1.0625rem; }
 @media (max-width: 520px) { .sign-grid { grid-template-columns: repeat(2, 1fr); } }
 .sign-card { display: flex; flex-direction: column; gap: 0.25rem; padding: 2rem 1.5rem; background: var(--bg); text-decoration: none; height: 100%; transition: background 0.4s var(--ease); }
 .sign-card:hover { background: rgb(200 169 106 / 0.06); }
-.sign-card .glyph { font-size: 2.5rem; color: var(--gold); transition: transform 0.6s var(--ease); }
+.sign-card .glyph { font-size: 2.5rem; color: var(--el, var(--gold)); transition: transform 0.6s var(--ease); }
 .sign-card:hover .glyph { transform: translateY(-4px); }
 .sign-name { font: 400 2rem/1.1 var(--serif); }
 
@@ -232,7 +241,7 @@ dd { margin: 0; font-size: 1.0625rem; }
   padding: 7rem var(--gutter) 3rem;
   background: radial-gradient(closest-side at 50% 45%, rgb(200 169 106 / 0.1), transparent);
 }
-.sign-glyph { font-size: clamp(3rem, 7vw, 5rem); color: var(--gold); line-height: 1; margin-bottom: 1.5rem; }
+.sign-glyph { font-size: clamp(3rem, 7vw, 5rem); color: var(--el, var(--gold)); line-height: 1; margin-bottom: 1.5rem; }
 .keywords { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem; }
 .keywords span, .tags li { border: 1px solid var(--line); border-radius: 999px; padding: 0.375rem 0.875rem; font-size: 0.875rem; }
 .tags { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -266,13 +275,40 @@ dd { margin: 0; font-size: 1.0625rem; }
 .deep-card { background: var(--bg); padding: clamp(1.5rem, 3vw, 2.25rem); transition: background 0.4s var(--ease); }
 .deep-card:hover { background: rgb(242 237 228 / 0.025); }
 .deep-card .eyebrow { margin-bottom: 0.5rem; }
-.deep-card h3 { margin: 0 0 0.75rem; font-size: 2rem; line-height: 1.05; }
+.deep-card h3 { margin: 0 0 0.75rem; font-size: 2rem; line-height: 1.05; color: var(--el, var(--fg)); }
 .deep-card p { margin: 0 0 0.75rem; }
 .deep-card a { text-decoration-color: var(--line); }
 .element-signs { list-style: none; padding: 0; margin: 1.25rem 0 0; display: grid; gap: 0.25rem; }
 .element-signs a { display: grid; grid-template-columns: 2rem 1fr auto; align-items: baseline; padding: 0.5rem 0; border-top: 1px solid var(--line); text-decoration: none; transition: color 0.4s var(--ease), transform 0.5s var(--ease); }
-.element-signs a:hover { color: var(--gold); transform: translateX(4px); }
-.element-signs .glyph { color: var(--gold); font-size: 1.25rem; }
+.element-signs a:hover { color: var(--el, var(--gold)); transform: translateX(4px); }
+.element-signs .glyph { color: var(--el, var(--gold)); font-size: 1.25rem; }
+
+/* Lore + learn page */
+.lore-text { font: 400 1.375rem/1.35 var(--serif); }
+.learn-hero { min-height: 70dvh; }
+.learn-hero .hero-sub { margin-inline: auto; }
+.timeline { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); max-width: 52rem; }
+.timeline li { position: relative; padding: 0 0 2.25rem 2rem; }
+.timeline li::before { content: ''; position: absolute; left: -5px; top: 0.3rem; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px var(--bg); }
+.timeline .eyebrow { margin: 0 0 0.25rem; color: var(--gold); }
+.timeline p { margin: 0; font-size: 1.0625rem; }
+.learn-lead { font-size: clamp(1.25rem, 1.8vw, 1.625rem); margin-top: 1.5rem; }
+.precession { margin: 0; display: grid; place-items: center; }
+.precession svg { width: min(100%, 26rem); }
+.p-ring { fill: none; stroke: rgb(200 169 106 / 0.35); }
+.p-ring.dashed { stroke-dasharray: 2 5; }
+.p-glyph { font-size: 15px; text-anchor: middle; dominant-baseline: central; fill: var(--el); font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols', sans-serif; }
+.p-spin { animation: spin 40s linear infinite; }
+.p-spin line { stroke: var(--gold); stroke-dasharray: 3 3; }
+.p-spin circle { fill: var(--gold); }
+.p-earth { fill: var(--fg); }
+.facts-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin: 0; }
+.facts-list > div { background: var(--bg); padding: 1.5rem; }
+.facts-list > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.facts-list dd { color: var(--muted); font-size: 1rem; }
+.quick-facts { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.quick-facts li { font: 400 1.375rem/1.35 var(--serif); padding-top: 1.25rem; border-top: 1px solid var(--line); }
+@media (max-width: 900px) { .facts-list, .quick-facts { grid-template-columns: 1fr; } }
 
 /* Zodiac wheel page */
 .wheel-page { padding: 7rem var(--gutter) 3rem; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden;
@@ -295,7 +331,8 @@ dd { margin: 0; font-size: 1.0625rem; }
 }
 .filters button:hover { color: var(--fg); border-color: rgb(200 169 106 / 0.5); }
 .filters button:active { transform: scale(0.97); }
-.filters button[aria-pressed='true'] { color: var(--bg); background: var(--fg); border-color: var(--fg); }
+.filters button.fire, .filters button.earth, .filters button.air, .filters button.water { color: var(--el); border-color: color-mix(in srgb, var(--el) 35%, transparent); }
+.filters button[aria-pressed='true'] { color: var(--bg); background: var(--el, var(--fg)); border-color: var(--el, var(--fg)); }
 
 .zodiac { position: relative; width: min(100%, 52rem); aspect-ratio: 1; container-type: inline-size; }
 .zodiac-svg { width: 100%; height: 100%; overflow: visible; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
@@ -305,12 +342,12 @@ dd { margin: 0; font-size: 1.0625rem; }
 .zodiac-svg line { stroke: rgb(200 169 106 / 0.35); stroke-width: 1; }
 .zodiac-svg .ring { fill: none; stroke: rgb(200 169 106 / 0.3); }
 .zodiac-svg .dashed { stroke-dasharray: 2 7; }
-.seg path { fill: rgb(242 237 228 / 0); stroke: rgb(200 169 106 / 0.3); transition: fill 0.5s var(--ease); }
+.seg path { fill: color-mix(in srgb, var(--el) 4%, transparent); stroke: rgb(200 169 106 / 0.3); transition: fill 0.5s var(--ease); }
 .seg text { text-anchor: middle; dominant-baseline: central; transition: fill 0.5s var(--ease); }
-.seg-glyph { font-size: 44px; fill: rgb(200 169 106 / 0.8); font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols', sans-serif; }
+.seg-glyph { font-size: 44px; fill: color-mix(in srgb, var(--el) 75%, transparent); font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols', sans-serif; }
 .seg-name { font: 500 13px var(--sans); letter-spacing: 0.14em; text-transform: uppercase; fill: var(--muted); }
-.seg:hover path, .seg:focus-visible path, .seg.active path { fill: rgb(200 169 106 / 0.12); }
-.seg.active .seg-glyph, .seg:hover .seg-glyph { fill: var(--gold); }
+.seg:hover path, .seg:focus-visible path, .seg.active path { fill: color-mix(in srgb, var(--el) 16%, transparent); }
+.seg.active .seg-glyph, .seg:hover .seg-glyph { fill: var(--el); }
 .seg.active .seg-name, .seg:hover .seg-name { fill: var(--fg); }
 .seg, .seg:focus { outline: none; }
 .seg:focus-visible path { stroke: var(--gold); stroke-width: 2; }
@@ -326,12 +363,18 @@ dd { margin: 0; font-size: 1.0625rem; }
 .zodiac-center { position: absolute; inset: 25%; display: grid; place-items: center; pointer-events: none; }
 .zodiac-info { display: flex; flex-direction: column; align-items: center; gap: 0.6cqi; animation: rise 0.6s var(--spring) both; }
 .zodiac-info[hidden] { display: none; }
-.zi-glyph { font: 9cqi/1 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols', sans-serif; color: var(--gold); }
+.zi-glyph { font: 9cqi/1 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols', sans-serif; color: var(--el, var(--gold)); }
 .zi-name { font: 400 7.5cqi/1 var(--serif); letter-spacing: -0.02em; }
 .zi-dates, .zi-meta { font-size: max(0.7rem, 2cqi); color: var(--muted); }
-.zi-link { pointer-events: auto; margin-top: 1cqi; font-size: max(0.75rem, 1.9cqi); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--gold); padding: 0.5rem; }
+.zi-link { pointer-events: auto; margin-top: 1cqi; font-size: max(0.75rem, 1.9cqi); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--el, var(--gold)); padding: 0.5rem; }
 .zi-link:hover { text-decoration: underline; }
 
+@media (max-width: 440px) {
+  .nav { gap: 0.25rem; }
+  .logo { font-size: 1.2rem; }
+  .nav-link { letter-spacing: 0.06em; padding-inline: 0.3rem; font-size: 0.6875rem; }
+  .langs a { padding-inline: 0.55rem; }
+}
 @media (max-width: 768px) {
   .sky, .two-col { grid-template-columns: 1fr; }
   .sky { justify-items: start; }

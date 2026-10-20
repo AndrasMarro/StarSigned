@@ -30,6 +30,16 @@ export function signFor(month, day) {
   return SIGNS.filter((s) => md(s.start) <= v).sort((a, b) => md(b.start) - md(a.start))[0] ?? byId('capricorn');
 }
 
+// Dates the Sun enters each IAU constellation (current epoch, can vary by a day). Includes Ophiuchus.
+const CONSTELLATIONS = [[120, 'capricorn'], [216, 'aquarius'], [311, 'pisces'], [418, 'aries'], [513, 'taurus'], [621, 'gemini'],
+  [720, 'cancer'], [810, 'leo'], [916, 'virgo'], [1030, 'libra'], [1123, 'scorpio'], [1129, 'ophiuchus'], [1217, 'sagittarius']];
+
+/** Constellation the Sun actually stands in on a month/day: a sign id or 'ophiuchus'. */
+export function constellationFor(month, day) {
+  const v = month * 100 + day;
+  return CONSTELLATIONS.filter(([start]) => start <= v).at(-1)?.[1] ?? 'sagittarius';
+}
+
 const DAY = 86400000;
 const utc = (y, m, d) => Date.UTC(y, m - 1, d);
 
@@ -55,7 +65,12 @@ export function birthInfo(iso) {
   // Cusp as [earlier sign, later sign] when born within a day of a boundary.
   const cusp = offset <= 1 ? [SIGNS[(idx(sign.id) + 11) % 12], sign] : toEnd <= 1 ? [sign, SIGNS[(idx(sign.id) + 1) % 12]] : null;
 
-  return { sign, decan, coRuler, cusp, lifePath: lifePath(iso), weekday: date.getUTCDay(), days: Math.floor((Date.now() - t) / DAY) };
+  // ponytail: fixed 24-day shift (Lahiri ayanamsa, ~24 deg in this era); exact needs the birth year's ayanamsa.
+  const sid = new Date(t - 24 * DAY);
+  const sidereal = signFor(sid.getUTCMonth() + 1, sid.getUTCDate());
+
+  return { sign, decan, coRuler, cusp, sidereal, constellation: constellationFor(mo, d),
+    lifePath: lifePath(iso), weekday: date.getUTCDay(), days: Math.floor((Date.now() - t) / DAY) };
 }
 
 /** Numerology life path number; master numbers 11, 22, 33 are kept. */

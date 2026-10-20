@@ -58,7 +58,7 @@ export const UI = {
     all: 'All signs',
     footer: 'For entertainment. Daily readings are generated, not predicted.',
     noscript: 'Enable JavaScript to see today’s reading.',
-    wheelNav: 'Zodiac wheel',
+    wheelNav: 'Wheel',
     wheelTitle: 'The zodiac wheel',
     wheelSub: 'Twelve signs, one circle. Drag to spin it, hover or tap a sign to explore.',
     filterAll: 'All',
